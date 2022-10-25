@@ -1,31 +1,20 @@
 const express = require('express')
+const bodyParser = require('body-parser')
 const app = express()
 const db = require('./queries')
 const port = 3000
 
-const knexConfig = require('./knexfile');
-//initialize knex
-const knex = require('knex')(knexConfig[process.env.NODE_ENV])
+app.use(bodyParser.json())
+app.use(
+    bodyParser.urlencoded({
+        extended: true,
+    })
+)
 
 app.get('/', (request, response) => {
     response.sendFile(__dirname + '/index.html')
 })
 
-app.get('/user', (req, res) => {
-    knex('users')
-    .select({
-        id: 'id',
-        name: 'name',
-        email: 'email'
-    })
-    .then((users) => {
-        return res.json(users);
-    })
-    .catch((err) => {
-        console.error(err);
-        return res.json({success: false, message: 'An error occurred, please try again later.'});
-    })
-})
 app.get('/users', db.getUsers)
 app.get('/users/:id', db.getUserById)
 app.post('/users', db.createUser)

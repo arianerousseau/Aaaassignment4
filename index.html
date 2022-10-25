@@ -23,16 +23,18 @@ label {
     <div class="container">
     <div class="p-5 mb-4 bg-light rounded-3">
         <div class="container-fluid py-5">
-          <h1 class="display-5 fw-bold">Custom jumbotron</h1>
-          <p class="col-md-8 fs-4">Using a series of utilities, you can create this jumbotron, just like the one in previous versions of Bootstrap. Check out the examples below for how you can remix and restyle it to your liking.</p>
+          <h1 class="display-5 fw-bold">Users Database</h1>
+          <p class="col-md-8 fs-4">Add, modify, delete user or find their email address.</p>
+          <label for="id">Enter ID:</label>
+          <form><input type="integer" id="id" name="id" size="10"></form>
           <label for="name">Enter user name:</label>
           <form><input type="text" id="name" name="name" size="10"></form>
-          <button class="btn btn-primary btn-lg" type="button" id="email">Find email</button>
-          <label for="username">Enter new user name:</label>
-          <form><input type="text" id="username" name="username" size="10"></form>
-          <label for="emailaddress">Enter new user emain address:</label>
+          <label for="emailaddress">Enter user email address:</label>
           <form><input type="text" id="emailaddress" name="emailaddress" size="10"></form>
+          <button class="btn btn-primary btn-lg" type="button" id="email">Find email</button>
           <button class="btn btn-primary btn-lg" type="button" id="newuser">Create User</button>
+          <button class="btn btn-primary btn-lg" type="button" id="update">Update user</button>
+          <button class="btn btn-primary btn-lg" type="button" id="delete">Delete user</button>
           <button class="btn btn-primary btn-lg" type="button" id="show">Show me the Users</button>
           <button class="btn btn-primary btn-lg" type="button" id="hide">Hide Users</button>
         </div>
@@ -95,17 +97,52 @@ $('#email').click(function() {
     })
 });
 
-$('#newuser').click(function() {
+$('#update').click(function(){
     $("#show-users").fadeIn();
     document.getElementById('show-users').innerHTML = '';
-    var name = document.getElementById("username").value;
-    var email = document.getElementById("emailaddress").value;
+    
+  $.ajax({
+    method: "PUT",
+    url: 'http://localhost:3000/users/:id',
+    data:{
+      id:parseInt(document.getElementById("id").value),
+      name:document.getElementById("name").value,
+      email:document.getElementById("emailaddress").value
+    },
+    success: function(result){
+    var user = '';
+    console.log(result)
 
-    $.ajax({
-        method: createUser,
-        url: "/Users/arianerousseau/Desktop/A4/queries.js", 
-        success: app.get('/users', db.getUsers),
-    })
+    var mainContainer = document.getElementById("show-users");
+    var div = document.createElement('div');
+    div.classList.add('userrow');
+    div.innerHTML = 'Response: ' + result;
+    mainContainer.appendChild(div);
+}
+  });
+});
+
+$('#delete').click(function(){
+    $("#show-users").fadeIn();
+    document.getElementById('show-users').innerHTML = '';
+    
+  $.ajax({
+    method: "DELETE",
+    url: 'http://localhost:3000/users/:id',
+    data:{
+      id:document.getElementById("id").value,
+    },
+    success: function(result){
+    var user = '';
+    console.log(result)
+
+    var mainContainer = document.getElementById("show-users");
+    var div = document.createElement('div');
+    div.classList.add('userrow');
+    div.innerHTML = 'Response: ' + result;
+    mainContainer.appendChild(div);
+}
+  });
 });
 </script>  
 <script type="text/javascript" src="index.js"></script>
